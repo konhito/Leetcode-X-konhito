@@ -155,7 +155,7 @@ ${constraints}`;
                     flex-direction: column;
                 `;
             
-                // Create canvas container
+              
                 const canvasContainer = document.createElement('div');
                 canvasContainer.style.flex = '1';
                 const canvas = document.createElement('canvas');
@@ -165,7 +165,7 @@ ${constraints}`;
                 canvasContainer.appendChild(canvas);
                 popup.appendChild(canvasContainer);
             
-                // Create complexity text display
+            
                 const complexityText = document.createElement('div');
                 complexityText.style.cssText = `
                     padding: 10px;
@@ -181,7 +181,7 @@ ${constraints}`;
             
                 document.body.appendChild(popup);
             
-                // Convert complexity notations to points for line graph
+           
                 const complexityValues = {
                     'O(1)': 1,
                     'O(log n)': 2,
@@ -190,12 +190,11 @@ ${constraints}`;
                     'O(n^2)': 5,
                     'O(2^n)': 6
                 };
-            
-                // Parse time complexity
+        
                 const timeComplexity = complexity.split('\n')[0].replace('Time: ', '').trim();
                 const complexityLevel = complexityValues[timeComplexity] || 0;
             
-                // Create line graph data points
+         
                 const dataPoints = [];
                 for (let i = 0; i <= 10; i++) {
                     let y;
@@ -211,7 +210,7 @@ ${constraints}`;
                     dataPoints.push({x: i, y: y});
                 }
             
-                // Create chart
+              
                 new Chart(canvas, {
                     type: 'line',
                     data: {
@@ -254,7 +253,7 @@ ${constraints}`;
                                     color: '#eee'
                                 },
                                 ticks: {
-                                    display: false // Hide y-axis numbers
+                                    display: false 
                                 }
                             }
                         },
@@ -266,7 +265,7 @@ ${constraints}`;
                     }
                 });
             
-                // Add close button
+               
                 const closeButton = document.createElement('button');
                 closeButton.innerHTML = '×';
                 closeButton.style.cssText = `
