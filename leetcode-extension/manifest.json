@@ -1,14 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Leetcode Excalidraw Button",
+  "name": "Leetcode x Konhito",
   "version": "1.0",
-  "description": "Adds an Excalidraw button to Leetcode problem pages",
+  "description": "Analyzes code complexity in Leetcode",
   "permissions": [],
   "content_scripts": [
     {
       "matches": ["*://*.leetcode.com/*"],
-      "js": ["content.js"]
+      "js": ["lib/chart.js", "content.js"]
     }
   ]
-  
 }

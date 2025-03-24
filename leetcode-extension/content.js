@@ -130,6 +130,161 @@ ${constraints}`;
                 }
             }
 
+            function createPopupGraph(complexity) {
+                // Remove existing popup if any
+                const existingPopup = document.getElementById('complexity-popup');
+                if (existingPopup) {
+                    document.body.removeChild(existingPopup);
+                }
+            
+                const popup = document.createElement('div');
+                popup.id = 'complexity-popup';
+                popup.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                    padding: 20px;
+                    z-index: 1000;
+                    width: 400px;
+                    height: 400px;
+                    display: flex;
+                    flex-direction: column;
+                `;
+            
+                // Create canvas container
+                const canvasContainer = document.createElement('div');
+                canvasContainer.style.flex = '1';
+                const canvas = document.createElement('canvas');
+                canvas.id = 'complexity-chart';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvasContainer.appendChild(canvas);
+                popup.appendChild(canvasContainer);
+            
+                // Create complexity text display
+                const complexityText = document.createElement('div');
+                complexityText.style.cssText = `
+                    padding: 10px;
+                    margin-top: 10px;
+                    border-top: 1px solid #eee;
+                    text-align: center;
+                    font-family: monospace;
+                    font-size: 14px;
+                    color: #333;
+                `;
+                complexityText.textContent = complexity;
+                popup.appendChild(complexityText);
+            
+                document.body.appendChild(popup);
+            
+                // Convert complexity notations to points for line graph
+                const complexityValues = {
+                    'O(1)': 1,
+                    'O(log n)': 2,
+                    'O(n)': 3,
+                    'O(n log n)': 4,
+                    'O(n^2)': 5,
+                    'O(2^n)': 6
+                };
+            
+                // Parse time complexity
+                const timeComplexity = complexity.split('\n')[0].replace('Time: ', '').trim();
+                const complexityLevel = complexityValues[timeComplexity] || 0;
+            
+                // Create line graph data points
+                const dataPoints = [];
+                for (let i = 0; i <= 10; i++) {
+                    let y;
+                    switch(timeComplexity) {
+                        case 'O(1)': y = 1; break;
+                        case 'O(log n)': y = Math.log2(i + 1); break;
+                        case 'O(n)': y = i; break;
+                        case 'O(n log n)': y = i * Math.log2(i + 1); break;
+                        case 'O(n^2)': y = i * i; break;
+                        case 'O(2^n)': y = Math.pow(2, i); break;
+                        default: y = 0;
+                    }
+                    dataPoints.push({x: i, y: y});
+                }
+            
+                // Create chart
+                new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: 'Time Complexity',
+                            data: dataPoints,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Input Size (n)',
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: '#eee'
+                                },
+                                ticks: {
+                                    display: false // Hide x-axis numbers
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Time',
+                                    color: '#666'
+                                },
+                                grid: {
+                                    color: '#eee'
+                                },
+                                ticks: {
+                                    display: false // Hide y-axis numbers
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            
+                // Add close button
+                const closeButton = document.createElement('button');
+                closeButton.innerHTML = '×';
+                closeButton.style.cssText = `
+                    position: absolute;
+                    right: 10px;
+                    top: 10px;
+                    background: none;
+                    border: none;
+                    font-size: 20px;
+                    cursor: pointer;
+                    color: #666;
+                `;
+                closeButton.onmouseover = () => closeButton.style.opacity = '1';
+                closeButton.onmouseleave = () => closeButton.style.opacity = '0.7';
+                closeButton.onclick = () => document.body.removeChild(popup);
+                popup.appendChild(closeButton);
+            }
+
             excalidrawButton.addEventListener('click', async () => {
                 const code = getCodeContent();
                 if (!code) {
@@ -138,7 +293,7 @@ ${constraints}`;
                 }
 
                 const complexity = await analyzeComplexity(code);
-                alert(`Complexity Analysis:\n${complexity}`);
+                createPopupGraph(complexity);
             });
 
            
