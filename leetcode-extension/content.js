@@ -15,7 +15,7 @@ function createExcalidrawButton() {
             const excalidrawButton = document.createElement('button');
             excalidrawButton.className = 'rounded-full px-3 py-1.5 items-center whitespace-nowrap transition-all focus:outline-none inline-flex bg-fill-3 dark:bg-dark-fill-3 hover:bg-fill-2 dark:hover:bg-dark-fill-2 text-text-2 dark:text-dark-text-2 ml-2';
             excalidrawButton.id = 'excalidraw-btn';
-            excalidrawButton.innerHTML = 'Excalidraw';
+            excalidrawButton.innerHTML = 'Check Complexity';
 
             const tooltip = document.createElement('span');
             tooltip.innerHTML = 'by Konhito';
@@ -37,18 +37,18 @@ function createExcalidrawButton() {
                 transition: opacity 0.3s;
             `;
 
-            // Function to get problem content
+      
             function getProblemContent() {
-                // Get problem ID from URL
+           
                 const problemId = window.location.pathname.split('/')[2];
                 
-                // Check if we have cached content
+         
                 const cachedContent = localStorage.getItem(`leetcode_${problemId}`);
                 if (cachedContent) {
                     return cachedContent;
                 }
 
-                // Get the content as before
+          
                 const titleElement = document.querySelector('div[data-track-load="description_content"] h4');
                 const title = titleElement ? titleElement.textContent.trim() : '';
 
@@ -75,80 +75,73 @@ ${examples}
 ## Constraints
 ${constraints}`;
 
-                // Cache the content
+            
                 localStorage.setItem(`leetcode_${problemId}`, content);
                 return content;
             }
 
-            function createExcalidrawElement(text, x, y) {
-                return {
-                    id: `leetcode-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                    type: "text",
-                    x: x,
-                    y: y,
-                    width: 500, // approximate width
-                    height: 35,
-                    angle: 0,
-                    strokeColor: "#1e1e1e",
-                    backgroundColor: "transparent",
-                    fillStyle: "solid",
-                    strokeWidth: 2,
-                    strokeStyle: "solid",
-                    roughness: 2,
-                    opacity: 100,
-                    groupIds: [],
-                    frameId: null,
-                    roundness: null,
-                    seed: Math.floor(Math.random() * 1000000),
-                    version: 1,
-                    versionNonce: Math.floor(Math.random() * 1000000),
-                    isDeleted: false,
-                    boundElements: null,
-                    updated: Date.now(),
-                    link: null,
-                    locked: false,
-                    text: text,
-                    fontSize: 28,
-                    fontFamily: 5,
-                    textAlign: "left",
-                    verticalAlign: "top",
-                    containerId: null,
-                    originalText: text,
-                    autoResize: true,
-                    lineHeight: 1.25
-                };
+            
+
+            function getCodeContent() {
+                
+                const codeEditor = document.querySelector('.monaco-editor');
+                if (!codeEditor) return null;
+
+               
+                const codeContent = codeEditor.querySelector('.view-lines').textContent;
+                return codeContent.trim();
             }
 
-            excalidrawButton.addEventListener('click', () => {
-                const content = getProblemContent();
+            async function analyzeComplexity(code) {
+                const API_KEY = "AIzaSyBr_41k6M7BThI3aeOruBE2kCCBjh24doU"; // Replace with your API key
+                const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key="
                 
-                // Split content into lines
-                const lines = content.split('\n').filter(line => line.trim());
-                
-                // Create Excalidraw elements array
-                const elements = lines.map((line, index) => 
-                    createExcalidrawElement(line, -2000, 3500 + (index * 50))
-                );
+                const prompt = `Analyze this code and provide its time and space complexity. Only return the complexities, no explanation:
+                ${code}`;
 
-                // Save to Excalidraw localStorage
-                const excalidrawData = {
-                    type: "excalidraw",
-                    version: 2,
-                    source: "leetcode-extension",
-                    elements: elements,
-                    appState: {
-                        viewBackgroundColor: "#ffffff",
-                        currentItemFontFamily: 5
+                console.log(code)
+
+                try {
+                    const response = await fetch(API_URL+API_KEY, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: prompt
+                                }]
+                            }]
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Error analyzing code:', errorData);
+                        return `Error analyzing complexity: ${errorData.error.message}`;
                     }
-                };
 
-                localStorage.setItem('excalidraw', JSON.stringify(excalidrawData));
-                
-                // Open Excalidraw in a new tab
-                window.open('https://excalidraw.com/', '_blank');
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    console.error('Error analyzing code:', error);
+                    return 'Error analyzing complexity';
+                }
+            }
+
+            excalidrawButton.addEventListener('click', async () => {
+                const code = getCodeContent();
+                if (!code) {
+                    alert('No code found in editor');
+                    return;
+                }
+
+                const complexity = await analyzeComplexity(code);
+                alert(`Complexity Analysis:\n${complexity}`);
             });
 
-            // Add hover events
+           
             buttonWrapper.addEventListener('mouseenter', () => {
                 tooltip.style.visibility = 'visible';
                 tooltip.style.opacity = '1';
@@ -159,7 +152,7 @@ ${constraints}`;
                 tooltip.style.opacity = '0';
             });
 
-            // Append elements
+         
             buttonWrapper.appendChild(tooltip);
             buttonWrapper.appendChild(excalidrawButton);
             buttonContainer.appendChild(buttonWrapper);
