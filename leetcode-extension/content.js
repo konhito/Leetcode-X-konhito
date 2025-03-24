@@ -93,7 +93,7 @@ ${constraints}`;
             }
 
             async function analyzeComplexity(code) {
-                const API_KEY = "AIzaSyBr_41k6M7BThI3aeOruBE2kCCBjh24doU"; // Replace with your API key
+                const API_KEY = "Your api here"; // Replace with your API key
                 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key="
                 
                 const prompt = `Analyze this code and provide its time and space complexity. Only return the complexities, no explanation:
