@@ -1,7 +1,7 @@
-<h3 align="center">
+<h1 align="center">
   <img src = "https://github.com/user-attachments/assets/fd6c6371-ffc5-4e30-a300-7ab2082f88dd" width="120px" alt="gif" />
 
-  Leetcode X konhito</h3>
+  Leetcode X konhito</h1>
 
 <div align="center" >
 
