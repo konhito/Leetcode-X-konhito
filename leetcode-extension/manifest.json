@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Leetcode x Konhito",
+  "version": "1.0",
+  "description": "Analyzes code complexity in Leetcode",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["*://*.leetcode.com/*"],
+      "js": ["lib/chart.js", "content.js"]
+    }
+  ]
+}
