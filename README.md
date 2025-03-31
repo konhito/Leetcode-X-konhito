@@ -31,7 +31,7 @@
 
 
 ## About The Project
-![image]()I'll add image later too cooked for today
+![image](https://s5.ezgif.com/tmp/ezgif-5ac43306e66275.gif)I'll add image later too cooked for today
 
 
 "Leetcode X konhito" is a browser extension that injects into LeetCode and provides time and space complexity analysis.
