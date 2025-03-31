@@ -71,7 +71,6 @@ cd Leetcode extension
 npm install
 ```
 ```
-npm run dev
 ```
 
 
